@@ -72,3 +72,11 @@ def format_yaxis_kHz():
     )
     plt.ylabel('Frequency (kHz)')
     plt.ylim(1000)
+
+def remove_borders(borders=['top', 'right'], ax=None):
+    """ Removes the specified borders of the axes.
+    Default borders are top and right.
+    """
+    if ax is None:
+        ax = plt.gca()
+    ax.spines[borders].set_visible(False)
