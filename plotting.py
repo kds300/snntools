@@ -27,7 +27,7 @@ def add_key_ylabel(key, ax=None):
     for i in range(len(key)-1):
         if key[i] != key[i+1]:
             ax.axhline(i+0.5, color='lightgrey', linestyle='dashed', zorder=0)
-            bounds.append(i)
+            bounds.append(i+0.5)
     bounds.append(len(key))
 
     yticks = [(bounds[i] + bounds[i+1])/2 for i in range(len(bounds)-1)]
