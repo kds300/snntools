@@ -16,7 +16,7 @@ def add_key_ylabel(key, ax=None):
     lines between each label on the plot.
     """
     if ax is None:
-        ax = plt.gca(ax)
+        ax = plt.gca()
 
     label_list = []
     for syl in key:
