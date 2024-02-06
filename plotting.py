@@ -66,12 +66,16 @@ def specshow(spec, **kwargs):
         **kwargs
     )
 
-def use_custom_style(
-    style="/home/kevin/research/code/speech_commands/speech_commands.mplstyle"
-):
-    """Load a custom style file for matplotlib.
+def use_custom_style(style="speech_commands"):
+    """Load a custom style file for matplotlib. Looks for
+    {MPL_STYLE_DIR}/{style}.mplstyle
     """
-    plt.style.use(style)
+    style_pth = os.path.join(MPL_STYLE_DIR, f'{style}.mplstyle')
+
+    if not os.path.exists(style_pth):
+        raise FileNotFoundError(f"Style file not found: {style_pth}")
+
+    plt.style.use(style_pth)
 
 def format_yaxis_kHz():
     """Reformat a y-axis showing frequency to display in kHz.
