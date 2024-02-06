@@ -1,8 +1,21 @@
 import os
+import json
 import matplotlib.pyplot as plt
 
 
-FIG_SAVE_DIR = '/home/kevin/research/data/imgs'
+# setup dir info
+with open(
+    os.path.join(
+        os.path.dirname(__file__),
+        'dir_info.json'
+    ),
+    'r'
+) as f:
+        dir_info = json.load(f)
+
+
+FIG_SAVE_DIR = dir_info['FIG_SAVE_DIR']
+MPL_STYLE_DIR = dir_info['MPL_STYLE_DIR']
 
 
 def save_figs(file_name, exts=['pdf', 'png']):
