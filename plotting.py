@@ -97,3 +97,9 @@ def remove_borders(borders=['top', 'right'], ax=None):
     if ax is None:
         ax = plt.gca()
     ax.spines[borders].set_visible(False)
+
+def wheres_to_raster(wheres, n_idxs):
+    raster = [[] for _ in range(n_idxs)]
+    for idx, time in zip(*wheres):
+        raster[idx].append(time)
+    return raster
