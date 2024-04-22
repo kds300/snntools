@@ -31,10 +31,10 @@ def add_key_ylabel(key, ax=None):
     if ax is None:
         ax = plt.gca()
 
-    label_list = []
-    for syl in key:
-        if syl not in label_list:
-            label_list.append(syl)
+    label_list = [key[0], ]
+    for idx, label in enumerate(key[1:]):
+        if label != key[idx]:
+            label_list.append(label)
 
     bounds = [0]
     for i in range(len(key)-1):
