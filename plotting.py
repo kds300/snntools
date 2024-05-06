@@ -1,7 +1,7 @@
 import os
 import json
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 # setup dir info
 with open(
@@ -142,3 +142,38 @@ def plot_event_label_boundaries(
         ax.axvline(start_time, **_boundary_kwargs)
         ax.axvline(stop_time, **_boundary_kwargs)
         ax.text((start_time + stop_time) / 2, 0.01, label, **_text_kwargs)
+
+def plot_spike_raster(
+    raster:list, time_shift=0, key:list=[], ax=None, raster_kwargs:dict={}
+):
+    """Plot a spike raster using pyplot.eventplot().
+
+    Parameters
+    ----------
+    raster: list[list[float | int]]
+        Nested list containing spike times for each index.
+    time_shift: float|int, default = 0
+        Amount by which to shift the spikes by before plotting.
+        t -> t - time_shift for each spike.
+    key: dict, default = {}
+        Labelling key for the raster indices. If one is supplied, will plot the
+        labels using add_key_ylabel()
+    ax: Axes, default = None
+        Axes on which to plot the raster. If None supplied, will use plt.gca()
+    raster_kwargs: dict, default = {}
+        kwargs to be supplied to plt.eventplot() when plotting raster.
+    """
+    if not ax:
+        ax = plt.gca()
+
+    # shift spike times if needed
+    if np.abs(time_shift) > 0:
+        raster = [
+            [t - time_shift for t in raster_row]
+            for raster_row in raster
+        ]
+
+    if key:
+        add_key_ylabel(key=key, ax=ax)
+
+    ax.eventplot(raster, **raster_kwargs)
