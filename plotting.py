@@ -103,3 +103,42 @@ def wheres_to_raster(wheres, n_idxs):
     for idx, time in zip(*wheres):
         raster[idx].append(time)
     return raster
+
+def plot_event_label_boundaries(
+    events:list, boundary_kwargs:dict={}, text_kwargs:dict={}, ax=None,
+):
+    """Plots boundaries and labels for events defined by a start time, stop
+    time, and label.
+    
+    Parameters
+    ----------
+    events: list
+        List of events [start_time, stop_time, label] for plotting.
+    bound_kwargs: dict
+        Keyword arguments for plotting the event boundaries (plt.axvline)
+    text_kwargs: dict
+        Keyword arguments for plotting the event labels (plt.text)
+    """
+    # get current axes if None supplied
+    if not ax:
+        ax = plt.gca()
+    # default kwargs for boundaries and text
+    _boundary_kwargs = {
+        'linestyle': 'dashed',
+        'color': 'gray',
+        'zorder': 0
+    }
+    _text_kwargs = {
+        'ha': 'center',
+        'clip_on': True,
+        'transform': ax.get_xaxis_transform()
+    }
+
+    # update with supplied args
+    _boundary_kwargs.update(boundary_kwargs)
+    _text_kwargs.update(text_kwargs)
+
+    for start_time, stop_time, label in events:
+        ax.axvline(start_time, **_boundary_kwargs)
+        ax.axvline(stop_time, **_boundary_kwargs)
+        ax.text((start_time + stop_time) / 2, 0.01, label, **_text_kwargs)
