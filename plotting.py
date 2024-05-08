@@ -144,7 +144,12 @@ def plot_event_label_boundaries(
         ax.text((start_time + stop_time) / 2, 0.01, label, **_text_kwargs)
 
 def plot_spike_raster(
-    raster:list, time_shift=0, key:list=[], ax=None, raster_kwargs:dict={}
+    raster:list,
+    time_shift=0,
+    key:list=[],
+    ax=None,
+    raster_kwargs:dict={},
+    adjust_ylim=True,
 ):
     """Plot a spike raster using pyplot.eventplot().
 
@@ -177,3 +182,6 @@ def plot_spike_raster(
         add_key_ylabel(key=key, ax=ax)
 
     ax.eventplot(raster, **raster_kwargs)
+
+    if adjust_ylim:
+        ax.set_ylim(-0.5, len(raster) - 0.5)
