@@ -19,6 +19,9 @@ class Config:
                 out[k] = v
         return out
 
+    def keys(self):
+        return self.__dict__.keys()
+
     def __repr__(self):
         return f"{type(self).__name__}({self.as_dict()})"
 
