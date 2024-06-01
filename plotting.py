@@ -131,7 +131,11 @@ def plot_event_label_boundaries(
     _text_kwargs = {
         'y': 0.01,
         'ha': 'center',
-        'clip_on': True,
+        'bbox': {
+            'alpha': 0.8,
+            'color': 'white',
+            'boxstyle': 'Round4, pad=0.0'
+        },
         'transform': ax.get_xaxis_transform()
     }
 
@@ -139,10 +143,14 @@ def plot_event_label_boundaries(
     _boundary_kwargs.update(boundary_kwargs)
     _text_kwargs.update(text_kwargs)
 
+    xi, xf = ax.get_xlim()
     for start_time, stop_time, label in events:
-        ax.axvline(start_time, **_boundary_kwargs)
-        ax.axvline(stop_time, **_boundary_kwargs)
-        ax.text(x=(start_time + stop_time) / 2, s=label, **_text_kwargs)
+        if start_time <= xf:
+            ax.axvline(start_time, **_boundary_kwargs)
+        if stop_time >= xi:
+            ax.axvline(stop_time, **_boundary_kwargs)
+        if xi <= (start_time + stop_time) / 2 <= xf:
+            ax.text(x=(start_time + stop_time) / 2, s=label, **_text_kwargs)
 
 def plot_spike_raster(
     raster:list,
