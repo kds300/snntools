@@ -193,6 +193,34 @@ class SpikeData:
         obj.set_spikes(spikes, label, n_timesteps)
         return obj
 
+    @classmethod
+    def from_sequence(
+        cls,
+        spike_sequence,
+        index_key=None,
+        label='',
+        n_timesteps=-1,
+    ):
+        """Create SpikeData object from a sequence of spikes in the form
+        [(idx0, time0), (idx1, time1), ... (idxn, timen)].
+        """
+        if index_key is None:
+            # make index using detector indices of the spikes
+            index_key = {
+                i: i 
+                for i in range(max(spike_sequence, key=lambda x:x[0])[0] + 1)
+            }
+
+        # create spike dictionary
+        spikes = {key: [] for key in index_key.values()}
+        for idx, time in spike_sequence:
+            # get key using the index key and add spike time
+            spikes[index_key[idx]].append(time)
+
+        # create SpikeData object
+        obj = cls()
+        obj.set_spikes(spikes, label, n_timesteps)
+        return obj
 
 def combine_spike_data(
     x: SpikeData, y: SpikeData, n_timesteps:int=-1, label:str=''
