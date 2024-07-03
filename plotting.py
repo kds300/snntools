@@ -2,6 +2,7 @@ import os
 import json
 import matplotlib.pyplot as plt
 import numpy as np
+from.data import Database
 
 # setup dir info
 with open(
@@ -194,3 +195,30 @@ def plot_spike_raster(
 
     if adjust_ylim:
         ax.set_ylim(-0.5, len(raster) - 0.5)
+
+def plot_score_mean_std_v_templates(
+    scores:'Database',
+    score_type:str,
+    errorbar_kw:dict={},
+    ax:'plt.Axes|None'=None
+):
+    """
+    Plot the mean values of scores entries, sorted by cond_id property.
+    Only works for database items which have a `cond_id` attribute.
+    """
+    cond_ids = np.array(sorted(set(scores.get_attrs('cond_id'))))
+
+    task_values = [
+        scores.get_entries(cond_id=cond_id, label=score_type).values
+        for cond_id in cond_ids
+    ]
+
+    if ax is None:
+        ax = plt.gca()
+
+    ax.errorbar(
+        x=cond_ids,
+        y=[np.mean(vals) for vals in task_values],
+        yerr=[np.std(vals) for vals in task_values],
+        **errorbar_kw
+    )
