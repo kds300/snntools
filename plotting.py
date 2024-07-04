@@ -25,6 +25,11 @@ def save_figs(file_name, exts=['pdf', 'png']):
     for ext in exts:
         plt.savefig(os.path.join(FIG_SAVE_DIR, f"{file_name}.{ext}"))
 
+def save_pdf(file_name):
+    """Save the current pyplot figure as a pdf.
+    """
+    plt.savefig(os.path.join(FIG_SAVE_DIR, f"{file_name}.pdf"))
+
 def add_key_ylabel(key, ax=None):
     """Label y-axis using provided key for the indices, adding gray dashed
     lines between each label on the plot.
