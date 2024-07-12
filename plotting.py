@@ -83,18 +83,20 @@ def use_custom_style(style="speech_commands"):
 
     plt.style.use(style_pth)
 
-def format_yaxis_kHz():
+def format_yaxis_kHz(ax=None):
     """Reformat a y-axis showing frequency to display in kHz.
     """
+    if ax is None:
+        ax = plt.gca()
     # format the y-axis
-    yticks = plt.yticks()
+    yticks = ax.get_yticks()
 
-    plt.yticks(
-        yticks[0],
-        [tick / 1000 for tick in yticks[0]],
+    ax.set_yticks(
+        yticks,
+        [tick / 1000 for tick in yticks],
     )
-    plt.ylabel('Frequency (kHz)')
-    plt.ylim(1000)
+    ax.set_ylabel('Frequency (kHz)')
+    # plt.ylim(1000)
 
 def remove_borders(borders=['top', 'right'], ax=None):
     """ Removes the specified borders of the axes.
