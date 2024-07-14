@@ -53,7 +53,7 @@ def add_key_ylabel(key, ax=None):
 
     ax.set_yticks(yticks, label_list)
 
-def specshow(spec, **kwargs):
+def specshow(spec, ax=None, **kwargs):
     """Use plt.imshow to plot the provided spectrogram, with the following
     modified default parameters:
     
@@ -62,11 +62,13 @@ def specshow(spec, **kwargs):
     cmap = 'jet'
     interpolation = 'none'
     """
+    if ax is None:
+        ax = plt.gca()
     origin = kwargs.pop('origin', 'lower')
     aspect = kwargs.pop('aspect', 'auto')
     cmap = kwargs.pop('cmap', 'jet')
     interpolation = kwargs.pop('interpolation', 'none')
-    plt.imshow(
+    ax.imshow(
         spec,
         origin=origin, cmap=cmap, aspect=aspect, interpolation=interpolation,
         **kwargs
