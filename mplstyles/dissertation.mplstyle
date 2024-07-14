@@ -5,6 +5,11 @@ axes.spines.top:    False
 
 figure.figsize:     6.0, 4.8  # figure size in inches
 figure.constrained_layout.use: True
+figure.labelsize:   medium     # size of the figure label (``Figure.sup[x|y]label()``)
+figure.titlesize:   medium
+
+font.size:          9.0
+
 
 #### MATPLOTLIBRC FORMAT
 
