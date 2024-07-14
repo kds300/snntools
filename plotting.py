@@ -229,3 +229,26 @@ def plot_score_mean_std_v_templates(
         yerr=[np.std(vals) for vals in task_values],
         **errorbar_kw
     )
+
+def add_time_label(lbl_x0, lbl_y, lbl_time, rate, transform=None):
+    """ Add a black bar labelled with the duration, in ms."""
+    if transform is None:
+        transform = plt.gcf().transFigure
+
+    x0, x1 = plt.gca().get_xlim()
+    # add time annotation
+    lbl_x1 = lbl_x0 + (lbl_time / ((x1 - x0) / rate * 1e3))
+    plt.plot(
+        [lbl_x0, lbl_x1],
+        [lbl_y, lbl_y ],
+        color="k",
+        transform=transform,
+        clip_on=False
+    )
+    plt.text(
+        (lbl_x0 + lbl_x1) / 2, lbl_y - 0.01,
+        f'{lbl_time} ms',
+        horizontalalignment='center',
+        verticalalignment='top',
+        transform=transform
+    )
