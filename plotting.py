@@ -19,11 +19,11 @@ FIG_SAVE_DIR = dir_info['FIG_SAVE_DIR']
 MPL_STYLE_DIR = dir_info['MPL_STYLE_DIR']
 
 
-def save_figs(file_name, exts=['pdf', 'png']):
+def save_figs(file_name, exts=['pdf', 'png'], **kwargs):
     """Save current pyplot figure in multiple file types.
     """
     for ext in exts:
-        plt.savefig(os.path.join(FIG_SAVE_DIR, f"{file_name}.{ext}"))
+        plt.savefig(os.path.join(FIG_SAVE_DIR, f"{file_name}.{ext}"), **kwargs)
 
 def save_pdf(file_name):
     """Save the current pyplot figure as a pdf.
