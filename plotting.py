@@ -53,26 +53,6 @@ def add_key_ylabel(key, ax=None):
 
     ax.set_yticks(yticks, label_list)
 
-def specshow(spec, ax=None, **kwargs):
-    """Use plt.imshow to plot the provided spectrogram, with the following
-    modified default parameters:
-    
-    origin = 'lower'
-    aspect = 'auto'
-    cmap = 'jet'
-    interpolation = 'none'
-    """
-    if ax is None:
-        ax = plt.gca()
-    origin = kwargs.pop('origin', 'lower')
-    aspect = kwargs.pop('aspect', 'auto')
-    cmap = kwargs.pop('cmap', 'jet')
-    interpolation = kwargs.pop('interpolation', 'none')
-    ax.imshow(
-        spec,
-        origin=origin, cmap=cmap, aspect=aspect, interpolation=interpolation,
-        **kwargs
-    )
 
 def use_custom_style(style="speech_commands"):
     """Load a custom style file for matplotlib. Looks for
@@ -85,28 +65,6 @@ def use_custom_style(style="speech_commands"):
 
     plt.style.use(style_pth)
 
-def format_yaxis_kHz(ax=None):
-    """Reformat a y-axis showing frequency to display in kHz.
-    """
-    if ax is None:
-        ax = plt.gca()
-    # format the y-axis
-    yticks = ax.get_yticks()
-
-    ax.set_yticks(
-        yticks,
-        [tick / 1000 for tick in yticks],
-    )
-    ax.set_ylabel('Frequency (kHz)')
-    # plt.ylim(1000)
-
-def remove_borders(borders=['top', 'right'], ax=None):
-    """ Removes the specified borders of the axes.
-    Default borders are top and right.
-    """
-    if ax is None:
-        ax = plt.gca()
-    ax.spines[borders].set_visible(False)
 
 def wheres_to_raster(wheres, n_idxs):
     raster = [[] for _ in range(n_idxs)]
@@ -114,53 +72,6 @@ def wheres_to_raster(wheres, n_idxs):
         raster[idx].append(time)
     return raster
 
-def plot_event_label_boundaries(
-    events:list, boundary_kwargs:dict={}, text_kwargs:dict={}, ax=None,
-):
-    """Plots boundaries and labels for events defined by a start time, stop
-    time, and label.
-    
-    Parameters
-    ----------
-    events: list
-        List of events [start_time, stop_time, label] for plotting.
-    bound_kwargs: dict
-        Keyword arguments for plotting the event boundaries (plt.axvline)
-    text_kwargs: dict
-        Keyword arguments for plotting the event labels (plt.text)
-    """
-    # get current axes if None supplied
-    if not ax:
-        ax = plt.gca()
-    # default kwargs for boundaries and text
-    _boundary_kwargs = {
-        'linestyle': 'dashed',
-        'color': 'gray',
-        'zorder': 0
-    }
-    _text_kwargs = {
-        'y': 0.01,
-        'ha': 'center',
-        'bbox': {
-            'alpha': 0.8,
-            'color': 'white',
-            'boxstyle': 'Round4, pad=0.0'
-        },
-        'transform': ax.get_xaxis_transform()
-    }
-
-    # update with supplied args
-    _boundary_kwargs.update(boundary_kwargs)
-    _text_kwargs.update(text_kwargs)
-
-    xi, xf = ax.get_xlim()
-    for start_time, stop_time, label in events:
-        if start_time <= xf:
-            ax.axvline(start_time, **_boundary_kwargs)
-        if stop_time >= xi:
-            ax.axvline(stop_time, **_boundary_kwargs)
-        if xi <= (start_time + stop_time) / 2 <= xf:
-            ax.text(x=(start_time + stop_time) / 2, s=label, **_text_kwargs)
 
 def plot_spike_raster(
     raster:list,
