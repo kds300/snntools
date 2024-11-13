@@ -1,8 +1,10 @@
 import os
 import json
-import matplotlib.pyplot as plt
+
 import numpy as np
-from.data import Database
+import matplotlib.pyplot as plt
+
+from .data import Database
 
 # setup dir info
 with open(
@@ -14,7 +16,6 @@ with open(
 ) as f:
         dir_info = json.load(f)
 
-
 FIG_SAVE_DIR = dir_info['FIG_SAVE_DIR']
 MPL_STYLE_DIR = dir_info['MPL_STYLE_DIR']
 
@@ -25,10 +26,12 @@ def save_figs(file_name, exts=['pdf', 'png'], **kwargs):
     for ext in exts:
         plt.savefig(os.path.join(FIG_SAVE_DIR, f"{file_name}.{ext}"), **kwargs)
 
+
 def save_pdf(file_name):
     """Save the current pyplot figure as a pdf.
     """
     plt.savefig(os.path.join(FIG_SAVE_DIR, f"{file_name}.pdf"))
+
 
 def add_key_ylabel(key, ax=None):
     """Label y-axis using provided key for the indices, adding gray dashed
@@ -55,8 +58,9 @@ def add_key_ylabel(key, ax=None):
 
 
 def use_custom_style(style="speech_commands"):
-    """Load a custom style file for matplotlib. Looks for
-    {MPL_STYLE_DIR}/{style}.mplstyle
+    """Load a custom style file for matplotlib.
+
+    Looks for {MPL_STYLE_DIR}/{style}.mplstyle
     """
     style_pth = os.path.join(MPL_STYLE_DIR, f'{style}.mplstyle')
 
@@ -116,6 +120,7 @@ def plot_spike_raster(
     if adjust_ylim:
         ax.set_ylim(-0.5, len(raster) - 0.5)
 
+
 def plot_score_mean_std_v_templates(
     scores:'Database',
     score_type:str,
@@ -142,6 +147,7 @@ def plot_score_mean_std_v_templates(
         yerr=[np.std(vals) for vals in task_values],
         **errorbar_kw
     )
+
 
 def add_time_label(lbl_x0, lbl_y, lbl_time, rate, transform=None):
     """ Add a black bar labelled with the duration, in ms."""
