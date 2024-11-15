@@ -3,11 +3,37 @@ import copy
 
 
 class SpikeData:
+    """Multi-input spike sequence.
+
+    Stores a sequence of spikes defined as a list of (index, time) pairs.
+
+    Attributes
+    ----------
+    spikes: dict
+        Dict. containing the spike data. each key is the label for a spike
+        index. The corresponding value is the list of times at whih that index
+        contains spikes.
+    label: str
+        Descriptive name for the spike object
+    n_timesteps: int
+        The total number of timesteps for which the object contains info.
+    """
     spikes: dict
     label: str
     n_timesteps: int
 
     def __init__(self, spikes:dict={}, label:str='', n_timesteps:int=-1):
+        """
+        Parameters
+        ----------
+        spikes: dict[str,list[int|float]], optional
+            dictionary containing spike times for initializing the spikedata
+        label: str, optional
+            Descriptive name for the spike object
+        n_timesteps: int, optional
+            Specifies duration of the spike data. If not supplied, will be set
+            to the maximum spike time plus one.
+        """
         self.set_spikes(spikes, label, n_timesteps)
 
     def add(
@@ -15,11 +41,17 @@ class SpikeData:
         spike_data,
     ):
         """Add spike information from spike_data to the SpikeData object.
+
         If they share any indices, all spikes from both sets will be included
         (without duplicating times). Any detectors in spike_data not found in
         self will be added to self. Any detectors in self not found in
         spike_data are left alone. n_timesteps will be set to the larger of the
         two values. Label is left alone.
+
+        Parameters
+        ----------
+        spike_data: SpikeData
+            Another SpikeData object containing the spike information to add.
         """
         for label, spike_times in spike_data.get_spikes().items():
             if label in self.spikes:
@@ -41,7 +73,7 @@ class SpikeData:
     ):
         """Sets the information for a spike raster, overwriting existing data.
 
-        n_timesteps overrides the number of timesteps found in the spike raster
+        See initialization of class for more info.
         """
         self.spikes = copy.deepcopy(spikes)
         self.label = label
@@ -68,7 +100,25 @@ class SpikeData:
         detectors:list=[]
     ):
         """Get spikes for specified detectors between t_min and t_max.
+
         Default is to return all spikes for all detectors.
+
+        Parameters
+        ----------
+        t_min: int, optional
+            Minimum time for which to return spikes
+        t_max: int, optional
+            Maximum time for which to return spikes
+        relative_times: bool, optional
+            If true, return spike times relative to `t_min`
+        detectors: list[str], optional
+            Names of the detectors/indices for which to return spike data.
+
+        Returns
+        -------
+        spike_data: dict
+            Dict containing spike data for the specified detectors/indices and
+            times
         """
         # set t_max to end of data if none provided
         if t_max <= 0:
@@ -95,9 +145,21 @@ class SpikeData:
 
     def raster(self, key:dict={}):
         """Return the spike raster as list of lists of spike times.
+
         If key is provided, will use this for
         determining detector order. A key with only a subset of the detectors
         will create a raster for only those detectors.
+
+        Parameters
+        ----------
+        key: dict, optional
+            dictionary containing integer keys with values corresponding to
+            detector/index names, used to specify the order of raster.
+
+        Returns
+        -------
+        raster: list
+            Nested list of spike times
         """
         if not key:
             key = {
@@ -110,10 +172,24 @@ class SpikeData:
         ]
 
     def array(self, key:dict={}):
-        """Return the spike data as an array with shape
-        (n_indices, n_timesteps). If key is provided, will use this for
-        determining detector order. A key with only a subset of the detectors
-        will create a spike array for only those detectors.
+        """Return the spike data as a binary array.
+
+        Array has shape (n_indices, n_timesteps). If key is provided, will use 
+        this for determining detector order. A key with only a subset of the
+        detectors will create a spike array for only those detectors.
+
+        Parameters
+        ----------
+        key: dict, optional
+            dict containing integer keys with values corresponding to detectors
+            / indices. Defines the order of the array rows.
+
+        Returns
+        -------
+        spike_array: numpy.ndarray
+            Array of shape (n_indices, n_timesteps) containing binary spike
+            data. spike_array[idx, t] = 1 corresponds to a spike occurring
+            from index idx at time t.
         """
         if not key:
             key = {
@@ -128,7 +204,14 @@ class SpikeData:
         return spike_arr
 
     def get_spike_wheres(self):
-        """Return the spike data in a format similar to np.where output"""
+        """Return the spike data in a format similar to np.where output.
+
+        Returns
+        -------
+        (indices, times): tuple
+            tuple containing a list of indices, followed by a list of
+            corresponding spike times.
+        """
         indices = []
         times = []
         for idx, idx_times in enumerate(self.raster()):
@@ -149,6 +232,19 @@ class SpikeData:
     ):
         """Create SpikeData object from indices and times, as returned
         by np.where
+
+        Parameters
+        ----------
+        indices: list
+            list of index values for the input spikes
+        times: list
+            list of time values for the input spikes
+        index_key: dict, optional
+            key containing names for the spike indices
+        label: str, optional
+            Descriptive name for the spike object
+        n_timesteps: int, optional
+            Number of timesteps described by the spike object
         """
         if index_key is None:
             if len(indices) == 0:
@@ -174,9 +270,23 @@ class SpikeData:
         label='',
         n_timesteps=-1
     ):
-        """Create SpikeData object from a spike array. The array must be a
-        2-D array with dimensions (indices, timesteps). Assumes zero-valued
-        elements are non-spikes, and non-zero elements are spikes.
+        """Create SpikeData object from a spike array.
+
+        The array must be a 2-D array with dimensions (indices, timesteps).
+        Assumes zero-valued elements are non-spikes and non-zero elements are
+        spikes.
+
+        Parameters
+        ----------
+        spike_array: numpy.ndarray
+            Array containing spike data.
+        index_key: dict, optional
+            Dictionary containing labels for the indices / rows of the array
+        label: str, optional
+            Descriptive name for the returned SpikeData object
+        n_timesteps: int, optional
+            Specify a duration of time for which the object contains info.
+            If not supplied, n_timesteps = spike_array.shape[1] + 1.
         """
         if index_key is None:
             index_key = {
@@ -201,8 +311,20 @@ class SpikeData:
         label='',
         n_timesteps=-1,
     ):
-        """Create SpikeData object from a sequence of spikes in the form
-        [(idx0, time0), (idx1, time1), ... (idxn, timen)].
+        """Create SpikeData object from a sequence of spikes.
+
+        Parameters
+        ----------
+        spike_sequence: list
+            List of spike in the form
+            [(idx0, time0), (idx1, time1), ... (idxn, timen)]
+        index_key: dict, optional
+            Dictionary containing labels for the indices / rows of the array
+        label: str, optional
+            Descriptive name for the returned SpikeData object
+        n_timesteps: int, optional
+            Specify a duration of time for which the object contains info.
+            If not supplied, n_timesteps = spike_array.shape[1] + 1.
         """
         if index_key is None:
             # make index using detector indices of the spikes
@@ -222,16 +344,30 @@ class SpikeData:
         obj.set_spikes(spikes, label, n_timesteps)
         return obj
 
+
 def combine_spike_data(
     x: SpikeData, y: SpikeData, n_timesteps:int=-1, label:str=''
 ) -> SpikeData:
-    """Combine two SpikeData objects. Shared indices will use timesteps from
-    both objects, without duplicating repeated times. Unique indices will be
-    added to the output object.
+    """Combine two SpikeData objects.
 
-    Unless otherwise specified:
-    n_timesteps is chosen as the higher of the two objects' n_timesteps.
-    label is set as x.label
+    Shared indices will use timesteps from both objects, without duplicating 
+    repeated times. Unique indices will be added to the output object.
+    Unless otherwise specified, n_timesteps is chosen as the higher of the
+    two objects' n_timesteps and label is set as x.label
+
+    Parameters
+    ----------
+    x, y: SpikeData
+        SpikeData objects to be combined
+    label: str, optional
+        Descriptive name for the returned SpikeData object
+    n_timesteps: int, optional
+        Specify a duration of time for which the object contains info.
+
+    Returns
+    -------
+    spikes: SpikeData
+        combination of x and y
     """
     out = SpikeData()
     out.add(x)
