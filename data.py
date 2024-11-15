@@ -2,16 +2,29 @@ import typing
 from dataclasses import dataclass
 from functools import partial
 
+
 class Database:
     """Class for defining a basic dataclass-based database."""
     _entries: 'list[DatabaseEntry]'
 
     def __init__(self, entries:'list[DatabaseEntry]'=[]):
+        """
+        Parameters
+        ----------
+        entries: list[DatabaseEntry], Optional
+            List containing the entries with which to initialize the database.
+        """
         self._entries = []
         self._entries.extend(entries)
 
     def add_entries(self, entry: 'DatabaseEntry|list[DatabaseEntry]'):
-        """Add the entry / entries to the database."""
+        """Add the entry / entries to the database.
+
+        Parameters
+        ----------
+        entry: DatabaseEntry | list[DatabaseEntry]
+            The entry or list of entries to add to the database.
+        """
         if isinstance(entry, DatabaseEntry):
             self._entries.append(entry)
         else:
@@ -19,13 +32,22 @@ class Database:
 
     def get_entries(self, **kwargs) -> 'Database':
         """Returns a Database containing all entries that satisfy the
-        specified conditions. For each parameter, supply either a single value
+        specified conditions.
+
+        For each parameter, supply either a single value
         or a list of possible values to match the entries against.
         Unsupplied parameters will select all values for that parameter.
 
+        Parameters
+        ----------
+        **kwargs
+            Specify desired values for the attributes of the DatabaseEntry
+            objects
+
         Returns
         -------
-        Database object containing valid entries.
+        database: Database
+            Database object containing entries matching the conditions.
         """
         # convert inputs to list if required, ignoring 'None' values
         kw_filter = {}
@@ -41,12 +63,30 @@ class Database:
     def get_attrs(self, attr:str) -> 'list':
         """Get the value of the specified attribute for each entry in the
         database.
+
+        Parameters
+        ----------
+        attr: str
+            Name of the data attribute for which to get the values
+
+        Returns
+        -------
+            values: list
+                List values corresponding to the specified attribute for each
+                entry in the database
         """
         return [getattr(e, attr) for e in self._entries]
 
     @property
     def values(self) -> 'list[float]':
-        """Return list of values for each entry in the database."""
+        """Return list of values for each entry in the database.
+
+        Returns
+        -------
+        values: list[float]
+            Returns list of the values for the `value` attribute of each entry
+            in the database
+        """
         return self.get_attrs(attr='value')
 
     def _filter_db(self, obj:'DatabaseEntry', **kwargs):
@@ -77,14 +117,16 @@ class Database:
 
 @dataclass(frozen=True)
 class DatabaseEntry:
-    """Information about a score for a BASS system.
-    `label` and `value` correspond to the score information.
-    The other attributes are system metadata.
-    
+    """Basic entry for a database.
+
+    Additional attributes can be added to further describe each entry.
+
     Attributes
     ----------
     label: str
+        Identifier for the entry
     value: float
+        Quantity for the entry
     """
     label: str
     value: float
